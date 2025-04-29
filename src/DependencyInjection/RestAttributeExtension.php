@@ -20,12 +20,12 @@ final class RestAttributeExtension extends Extension
         // Загружаем сервисы
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__.'/../../Resources/config')
+            new FileLocator(__DIR__.'/../Resources/config')
         );
         $loader->load('services.yaml');
 
         // Устанавливаем параметры
-        $container->setParameter('rest_attribute.default_error_message', $config['default_error_message']);
+        $container->setParameter('quickclack.rest_attribute.default_error_message', $config['default_error_message']);
 
         // Если валидация отключена, удаляем зависимость от Validator
         if (!$config['enable_validation']) {

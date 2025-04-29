@@ -1,3 +1,0 @@
-rest_attribute:
-  enable_validation: true
-  default_error_message: 'Validation failed'

@@ -14,7 +14,7 @@ class ParamFetcher
 
     public function __construct(
         private Request $request,
-        private ValidatorInterface $validator,
+        private ?ValidatorInterface $validator = null,
         private string $defaultErrorMessage = 'Invalid parameter value'
     ) {}
 

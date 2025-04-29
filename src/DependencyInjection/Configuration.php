@@ -11,7 +11,7 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('rest-attribute-bundle');
+        $treeBuilder = new TreeBuilder('rest_attribute');
 
         $treeBuilder->getRootNode()
             ->children()

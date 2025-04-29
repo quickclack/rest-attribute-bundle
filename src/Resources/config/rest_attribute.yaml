@@ -1,0 +1,3 @@
+rest_attribute:
+  enable_validation: true
+  default_error_message: 'Invalid parameter value'

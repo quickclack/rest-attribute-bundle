@@ -6,6 +6,6 @@ namespace Quickclack\RestAttributeBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class RestAttributesBundle extends Bundle
+class RestAttributeBundle extends Bundle
 {
 }

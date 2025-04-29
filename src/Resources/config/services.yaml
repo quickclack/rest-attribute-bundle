@@ -1,16 +1,21 @@
-parameters:
-
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
   quickclack.rest_attribute.param_fetcher:
     class: Quickclack\RestAttributeBundle\Request\ParamFetcher
     arguments:
       - '@request_stack'
-      - '@validator' ~
-      - '%rest-attribute.default_error_message%'
+      - '@validator'
+      - '%quickclack.rest_attribute.default_error_message%'
 
   quickclack.rest_attribute.param_resolver:
-    class: Quickclack\RestAttributeBundle\Param\ParamFetcherResolver
+    class: Quickclack\RestAttributeBundle\Resolver\ParamFetcherValueResolver
     arguments:
-      - '@quickclack.rest-attribute.param_fetcher'
+      - '@request_stack'
+      - '@validator'
+      - '%quickclack.rest_attribute.default_error_message%'
     tags:
       - { name: controller.argument_value_resolver, priority: 50 }

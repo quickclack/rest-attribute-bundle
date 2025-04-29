@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Quickclack\RestAttributeBundle\Resolver;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Quickclack\RestAttributeBundle\Attribute\RouteParam;
 use Quickclack\RestAttributeBundle\Request\ParamFetcher;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -14,7 +15,9 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 final class ParamFetcherValueResolver implements ValueResolverInterface
 {
     public function __construct(
+        private RequestStack $requestStack,
         private ValidatorInterface $validator,
+        private string $defaultErrorMessage = 'Invalid parameter value'
     ) {
     }
 
@@ -24,7 +27,7 @@ final class ParamFetcherValueResolver implements ValueResolverInterface
             return [];
         }
 
-        $fetcher = new ParamFetcher($request, $this->validator);
+        $fetcher = new ParamFetcher($request, $this->validator, $this->defaultErrorMessage);
 
         // Получаем Param-атрибуты метода
         $controller = $request->attributes->get('_controller');
