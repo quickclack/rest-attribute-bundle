@@ -1,0 +1,16 @@
+parameters:
+
+services:
+  quickclack.rest_attribute.param_fetcher:
+    class: Quickclack\RestAttributeBundle\Request\ParamFetcher
+    arguments:
+      - '@request_stack'
+      - '@validator' ~
+      - '%rest-attribute.default_error_message%'
+
+  quickclack.rest_attribute.param_resolver:
+    class: Quickclack\RestAttributeBundle\Param\ParamFetcherResolver
+    arguments:
+      - '@quickclack.rest-attribute.param_fetcher'
+    tags:
+      - { name: controller.argument_value_resolver, priority: 50 }
