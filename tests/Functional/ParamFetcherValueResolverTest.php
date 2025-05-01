@@ -35,4 +35,14 @@ class ParamFetcherValueResolverTest extends WebTestCase
         $this->assertEquals(400, $client->getResponse()->getStatusCode());
         $this->assertStringContainsString('Invalid parameter value', $client->getResponse()->getContent());
     }
+
+    public function testInvalidPatternParamError(): void
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/test?name=John&age=test');
+
+        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Invalid format for param', $client->getResponse()->getContent());
+    }
 }
