@@ -1,0 +1,9 @@
+framework:
+  test: true
+  router:
+    utf8: true
+    resource: '%kernel.project_dir%/tests/Fixtures/config/routes.yaml'
+
+rest_attribute:
+  enable_validation: true
+  default_error_message: 'Test error message'

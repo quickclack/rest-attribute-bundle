@@ -7,6 +7,7 @@ namespace Quickclack\RestAttributeBundle\Request;
 use Symfony\Component\HttpFoundation\Request;
 use Quickclack\RestAttributeBundle\Attribute\RouteParam;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ParamFetcher
 {
@@ -16,7 +17,8 @@ class ParamFetcher
         private Request $request,
         private ?ValidatorInterface $validator = null,
         private string $defaultErrorMessage = 'Invalid parameter value'
-    ) {}
+    ) {
+    }
 
     public function fetch(array $paramAttributes): self
     {
@@ -28,17 +30,26 @@ class ParamFetcher
                 default => throw new \InvalidArgumentException("Unknown param source: {$param->from}")
             };
 
+            if ($param->required && ($value === null || $value === '')) {
+                throw new BadRequestHttpException($this->defaultErrorMessage);
+            }
+
             $this->params[$param->name] = $this->processValue($param, $value);
         }
 
         return $this;
     }
 
-    public function get(string $name): mixed
+    public function get(string $name, bool $strict = true): mixed
     {
         if (!array_key_exists($name, $this->params)) {
-            throw new \InvalidArgumentException("Param '$name' not fetched");
+            if ($strict) {
+                throw new \InvalidArgumentException("Param '$name' not fetched");
+            }
+
+            return null;
         }
+
         return $this->params[$name];
     }
 

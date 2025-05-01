@@ -29,15 +29,20 @@ final class ParamFetcherValueResolver implements ValueResolverInterface
 
         $fetcher = new ParamFetcher($request, $this->validator, $this->defaultErrorMessage);
 
-        // Получаем Param-атрибуты метода
         $controller = $request->attributes->get('_controller');
-        $method = is_array($controller)
-            ? new \ReflectionMethod($controller[0], $controller[1])
-            : new \ReflectionFunction($controller);
+
+        if (is_array($controller)) {
+            $reflection = new \ReflectionMethod($controller[0], $controller[1]);
+        } elseif (is_string($controller) && str_contains($controller, '::')) {
+            [$class, $method] = explode('::', $controller, 2);
+            $reflection = new \ReflectionMethod($class, $method);
+        } else {
+            throw new \LogicException('Unsupported controller format');
+        }
 
         $params = array_map(
             fn ($attr) => $attr->newInstance(),
-            $method->getAttributes(RouteParam::class)
+            $reflection->getAttributes(RouteParam::class)
         );
 
         yield $fetcher->fetch($params);

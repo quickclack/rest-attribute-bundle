@@ -1,0 +1,3 @@
+test_routes:
+  resource: '../Controller/'
+  type: attribute
