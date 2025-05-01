@@ -40,7 +40,7 @@ class ParamFetcher
         return $this;
     }
 
-    public function get(string $name, bool $strict = true): mixed
+    public function get(string $name, bool $strict = false): mixed
     {
         if (!array_key_exists($name, $this->params)) {
             if ($strict) {
@@ -60,38 +60,50 @@ class ParamFetcher
 
     private function getBodyParam(string $name): mixed
     {
-        $content = $this->request->getContent();
-        if (empty($content)) {
-            return null;
+        $contentType = $this->request->headers->get('Content-Type');
+
+        if ($contentType && str_starts_with($contentType, 'application/json')) {
+            $content = $this->request->getContent();
+
+            if (empty($content)) {
+                return null;
+            }
+
+            $data = json_decode($content, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \RuntimeException('Invalid JSON body');
+            }
+
+            return $data[$name] ?? null;
         }
 
-        $data = json_decode($content, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \RuntimeException('Invalid JSON body');
-        }
-
-        return $data[$name] ?? null;
+        return $this->request->request->get($name);
     }
 
     private function processValue(RouteParam $param, mixed $value): mixed
     {
-        // Если значение не передано и есть default
         if ($value === null && !$param->required) {
             return $param->default;
         }
 
-        // Проверка на обязательность
         if ($param->required && $value === null) {
             throw new \RuntimeException($param->errorMessage ?? "Param '{$param->name}' is required");
         }
 
-        // Приведение типа
-        $value = $this->castValue($param->type, $value);
+        if ($param->pattern) {
+            $pattern = $param->pattern;
 
-        // Валидация по паттерну
-        if ($param->pattern && !preg_match($param->pattern, (string)$value)) {
-            throw new \RuntimeException($param->errorMessage ?? "Invalid format for param '{$param->name}'");
+            if (@preg_match($pattern, '') === false) {
+                $pattern = '/' . str_replace('/', '\/', $pattern) . '/';
+            }
+
+            if (!preg_match($pattern, (string) $value)) {
+                throw new \RuntimeException($param->errorMessage ?? "Invalid format for param '{$param->name}'");
+            }
         }
+
+        $value = $this->castValue($param->type, $value);
 
         return $value;
     }

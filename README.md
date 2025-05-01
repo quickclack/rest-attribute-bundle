@@ -10,10 +10,18 @@ Modern REST support for Symfony 6.4–7.2 using attributes. This bundle simplifi
 
 ## Installation
 
-Install the bundle via Composer:
-
 ```bash
 composer require quickclack/rest-attribute-bundle
+```
+
+Install the bundle via Composer:
+
+## After installation, add to config/bundles.php:
+
+```php
+return [
+    Quickclack\RestAttributeBundle\RestAttributeBundle::class => ['all' => true],
+];
 ```
 
 ## Symfony 6.4–7.2 Compatibility
@@ -26,7 +34,7 @@ The bundle provides a simple way to fetch parameters from request queries and ro
 
 ## Example
 
-```
+```php
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
