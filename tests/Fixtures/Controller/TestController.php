@@ -12,7 +12,7 @@ class TestController
 {
     #[Get('/api/test')]
     #[RouteParam(name: 'name', from: 'query', type: 'string')]
-    #[RouteParam(name: 'age', from: 'query', type: 'int', default: 0, required: true, pattern: '\d+')]
+    #[RouteParam(name: 'age', from: 'query', type: 'int', required: true, pattern: '\d+')]
     public function testAction(ParamFetcher $fetcher): JsonResponse
     {
         return new JsonResponse([

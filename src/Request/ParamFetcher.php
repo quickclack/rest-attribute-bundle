@@ -92,11 +92,7 @@ class ParamFetcher
         }
 
         if ($param->pattern) {
-            $pattern = $param->pattern;
-
-            if (@preg_match($pattern, '') === false) {
-                $pattern = '/' . str_replace('/', '\/', $pattern) . '/';
-            }
+            $pattern = $this->normalizePattern($param->pattern);
 
             if (!preg_match($pattern, (string) $value)) {
                 throw new \RuntimeException($param->errorMessage ?? "Invalid format for param '{$param->name}'");
@@ -106,6 +102,15 @@ class ParamFetcher
         $value = $this->castValue($param->type, $value);
 
         return $value;
+    }
+
+    private function normalizePattern(string $pattern): string
+    {
+        if (@preg_match($pattern, '') === false) {
+            return '#^' . $pattern . '$#';
+        }
+
+        return $pattern;
     }
 
     private function castValue(?string $type, mixed $value): mixed
